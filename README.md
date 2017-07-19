@@ -1,6 +1,11 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+This is a simple bot integrating 
+
+*Azure Cloud Services
+*BotFramework
+*NodeJS
+*LUIS
 
 ### What is this repository for? ###
 
