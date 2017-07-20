@@ -18,16 +18,17 @@ var recognizer = new builder.LuisRecognizer(process.env.LUIS_MODEL_URL);
 
 bot.localePath(path.join(__dirname, './locale'));
 bot.recognizer(recognizer);
-.matches('Info-general', function (session, args) {
+var intents = new builder.IntentDialog({recognizers: [recognizer]})
+.matches('Info-general',  (session, args) => {
   session.send('You asked for information' + JSON.stringify(args))
-});
-.matches('Make-appointment', function (session, args) {
+})
+.matches('Make-appointment', (session, args) => {
   session.send('You asked for appointment' + JSON.stringify(args))
-});
-.onDefault(function (session){ 
+})
+.onDefault( (session) => { 
   session.send('Sorry i didint quite catch that')
 });
-// var intents = new builder.IntentDialog( recognizers: [recognizer])
+bot.dialog('/', intents);
 
 
 // bot.dialog('/', function (session) {
