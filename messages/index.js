@@ -35,6 +35,7 @@ var intents = new builder.IntentDialog({recognizers: [recognizer]})
   // session.send('Time  is\t' + time)
 
   session.send('You intend is \n' + intent)
+  session.send('THE ENTITIES INVOLVED ARE is \n' + intent.entities)
   session.send('LUIS MODEL INTENT SCORE \n' + JSON.stringify(args))
 
 
