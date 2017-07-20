@@ -26,14 +26,15 @@ var intents = new builder.IntentDialog({recognizers: [recognizer]})
 .matches('Make-appointment', (session, args) => {
   //RESOLVE TEST 
   var intent = args.intent;
-  var subject = builder.EntityRecognizer.findEntity(intent.entities, 'Subject');
-  var Target  = builder.EntityRecognizer.findEntity(intent.entities, 'Target');
-  var time    = builder.EntityRecognizer.resolveTime(intent.entities);
-  session.send('Let\'s confim shall we?')
-  session.send('Subject is\t' + subject)
-  session.send('Target is\t' + target)
-  session.send('Time  is\t' + time)
+  // var subject = builder.EntityRecognizer.findEntity(intent.entities, 'Subject');
+  // var Target  = builder.EntityRecognizer.findEntity(intent.entities, 'Target');
+  // var time    = builder.EntityRecognizer.resolveTime(intent.entities);
+  // session.send('Let\'s confim shall we?')
+  // session.send('Subject is\t' + subject)
+  // session.send('Target is\t' + target)
+  // session.send('Time  is\t' + time)
 
+  session.send('You intend is \n' + intent)
   session.send('LUIS MODEL INTENT SCORE \n' + JSON.stringify(args))
 
 
