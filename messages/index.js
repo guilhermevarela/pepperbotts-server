@@ -20,13 +20,26 @@ bot.localePath(path.join(__dirname, './locale'));
 bot.recognizer(recognizer);
 var intents = new builder.IntentDialog({recognizers: [recognizer]})
 .matches('Info-general',  (session, args) => {
-  session.send('You asked for information' + JSON.stringify(args))
+  session.send('HI I\'m Mrs Pepper Pots your newest personal assistant. And I will assist you by making appointments')
+  session.send('LUIS MODEL INTENT SCORE \n' + JSON.stringify(args))
 })
 .matches('Make-appointment', (session, args) => {
-  session.send('You asked for appointment' + JSON.stringify(args))
+  //RESOLVE TEST 
+  var intent = args.intent;
+  var subject = builder.EntityRecognizer.findEntity(intent.entities, 'Subject');
+  var Target  = builder.EntityRecognizer.findEntity(intent.entities, 'Target');
+  var time    = builder.EntityRecognizer.resolveTime(intent.entities);
+  session.send('Let\'s confim shall we?')
+  session.send('Subject is\t' + subject)
+  session.send('Target is\t' + target)
+  session.send('Time  is\t' + time)
+
+  session.send('LUIS MODEL INTENT SCORE \n' + JSON.stringify(args))
+
+
 })
 .onDefault( (session) => { 
-  session.send('Sorry i didint quite catch that')
+  session.send('Sorry i didin\'t quite catch that')
 });
 bot.dialog('/', intents);
 
