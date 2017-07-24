@@ -25,18 +25,41 @@ var intents = new builder.IntentDialog({recognizers: [recognizer]})
 })
 .matches('Make-appointment', (session, args) => {
   //RESOLVE TEST 
-  var intent = args.intent;
+  var intent  = args.intent;
   var entities = args.entities;
-  // var subject = builder.EntityRecognizer.findEntity(intent.entities, 'Subject');
-  // var Target  = builder.EntityRecognizer.findEntity(intent.entities, 'Target');
-  // var time    = builder.EntityRecognizer.resolveTime(intent.entities);
-  // session.send('Let\'s confim shall we?')
-  // session.send('Subject is\t' + subject)
-  // session.send('Target is\t' + target)
-  // session.send('Time  is\t' + time)
+  var subject = builder.EntityRecognizer.findEntity(entities, 'Subject'),
+      target  = builder.EntityRecognizer.findEntity(entities, 'Target'),
+      dateObj = builder.EntityRecognizer.findEntity(entities, 'builtin.datetimeV2.datetime');
 
+      
   session.send('You intend is \n' + intent)
-  session.send('THE ENTITIES INVOLVED ARE is \n' + entities)
+  session.send('THE SUBJECT IS \n' + subject.entity)
+  session.send('THE TARGET IS \n' + target.entity)
+  if (dateObj) {
+    if (dateObj.hasOwnProperty('resolution')) {
+      var res = dateObj['resolution'];
+      if (res.hasOwnProperty('values')) {
+        var values = res['values'];
+        if (values[0].hasOwnProperty('value')) {
+          var value = values[0]['value'];
+          session.send('at \n' + value)   
+        }  else {          
+          console.log('values ' + JSON.stringify(values))  
+          session.send('Sorry, I didnt quite catch the time. Could you repeat?')    
+        }
+      } else {
+        console.log('res ' + JSON.stringify(res))
+        session.send('Sorry, I didnt quite catch the time. Could you repeat?')    
+      }     
+    } else {
+      console.log('dateObj ' + JSON.stringify(dateObj))  
+      session.send('Sorry, I didnt quite catch the time. Could you repeat?')    
+    }        
+  } else {    
+    session.send('Sorry, I didnt quite catch the time. Could you repeat?')    
+  } 
+  
+
   session.send('LUIS MODEL INTENT SCORE \n' + JSON.stringify(args))
 
 
