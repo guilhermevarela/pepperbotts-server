@@ -29,37 +29,26 @@ var intents = new builder.IntentDialog({recognizers: [recognizer]})
   var entities = args.entities;
   var subject = builder.EntityRecognizer.findEntity(entities, 'Subject'),
       target  = builder.EntityRecognizer.findEntity(entities, 'Target'),
-      dateObj = builder.EntityRecognizer.findEntity(entities, 'builtin.datetimeV2.datetime');
+      date    = dateParse(entities);
 
       
   session.send('You intend is \n' + intent)
-  session.send('THE SUBJECT IS \n' + subject.entity)
-  session.send('THE TARGET IS \n' + target.entity)
-  if (dateObj) {
-    if (dateObj.hasOwnProperty('resolution')) {
-      var res = dateObj['resolution'];
-      if (res.hasOwnProperty('values')) {
-        var values = res['values'];
-        if (values[0].hasOwnProperty('value')) {
-          var value = values[0]['value'];
-          session.send('at \n' + value)   
-        }  else {          
-          console.log('values ' + JSON.stringify(values))  
-          session.send('Sorry, I didnt quite catch the time. Could you repeat?')    
-        }
-      } else {
-        console.log('res ' + JSON.stringify(res))
-        session.send('Sorry, I didnt quite catch the time. Could you repeat?')    
-      }     
-    } else {
-      console.log('dateObj ' + JSON.stringify(dateObj))  
-      session.send('Sorry, I didnt quite catch the time. Could you repeat?')    
-    }        
-  } else {    
-    session.send('Sorry, I didnt quite catch the time. Could you repeat?')    
-  } 
+  if (subject) {
+    session.send('THE SUBJECT IS \n' + subject.entity)
+  } else {
+    session.send('THE SUBJECT  NOT PRESENT')
+  }
+  if (target) {
+    session.send('THE TARGET IS \n' + target.entity)
+  } else {
+    session.send('THE TARGET NOT PRESENT')
+  }
+  if (date) {
+   session.send('THE DATE IS \n' + date)
+  } else {
+    session.send('THE DATE NOT PRESENT')
+  }
   
-
   session.send('LUIS MODEL INTENT SCORE \n' + JSON.stringify(args))
 
 
@@ -70,6 +59,44 @@ var intents = new builder.IntentDialog({recognizers: [recognizer]})
 bot.dialog('/', intents);
 
 
+//Functions searches for 'builtin.datetimeV2.datetime' if is not found 
+//          searches for 'builtin.datetimeV2.datet' if is not found 
+function dateParse( entities ) {
+  var dateValue = null,
+      dateObj = null;
+  try  {
+    dateObj = builder.EntityRecognizer.findEntity(entities, 'builtin.datetimeV2.datetime');
+    if (!dateObj) {
+      dateObj = builder.EntityRecognizer.findEntity(entities, 'builtin.datetimeV2.date');
+    }
+  }
+  catch(err) {
+    console.log('dateParse::Unable to parse builtin.datetimeV2.datetime\n' + err)
+    return dateValue
+  }
+
+  if (!dateObj) {return dateValue} 
+  
+  if (dateObj.hasOwnProperty('resolution')) {
+    var res = dateObj['resolution'];
+    if (res.hasOwnProperty('values')) {
+      var values = res['values'];
+      if (values[0].hasOwnProperty('value')) {
+        dateValue = values[0]['value'];
+      }  else {          
+        console.log('dateParse::Unable to resolve - values\n' + JSON.stringify(values))        
+        }
+      } else {
+
+        console.log('dateParse::Unable to resolve - resolution\n' + JSON.stringify(res))      
+      }     
+  } else {
+    console.log('dateParse::Unable to resolve - dateObj\n' + JSON.stringify(dateObj))      
+  }
+  
+
+  return dateValue; 
+}
 // bot.dialog('/', function (session) {
 //     session.send('You said ' + session.message.text);
 // });
